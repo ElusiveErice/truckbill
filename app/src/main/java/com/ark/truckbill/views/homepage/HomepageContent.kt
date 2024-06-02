@@ -15,9 +15,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ark.truckbill.R
 import com.ark.truckbill.activities.BillActivity
 import com.ark.truckbill.components.YearMonthSelectModalLayout
+import com.ark.truckbill.getCurrentDate
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 
@@ -30,16 +33,24 @@ fun HomepageContent() {
     val scope = rememberCoroutineScope()
 
     val dateState = remember {
-        mutableStateOf(LocalDate(2024, 1, 1))
+        mutableStateOf(getCurrentDate())
     }
-    YearMonthSelectModalLayout(
-        sheetState = modalBottomSheetState,
-        dateState = dateState,
-        hide = { scope.launch { modalBottomSheetState.hide() } }
+    Scaffold(
+        topBar = {
+            TopAppBar() {
+                Text(text = stringResource(id = R.string.app_name))
+            }
+        }
     ) {
-        Content(
-            currentDate = dateState.value,
-            show = { scope.launch { modalBottomSheetState.show() } })
+        YearMonthSelectModalLayout(
+            sheetState = modalBottomSheetState,
+            dateState = dateState,
+            hide = { scope.launch { modalBottomSheetState.hide() } }
+        ) {
+            Content(
+                currentDate = dateState.value,
+                show = { scope.launch { modalBottomSheetState.show() } })
+        }
     }
 }
 
