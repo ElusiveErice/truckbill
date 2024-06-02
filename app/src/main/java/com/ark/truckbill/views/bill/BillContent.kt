@@ -12,7 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ark.truckbill.R
-import com.ark.truckbill.SimpleTextStyle
 
 @Preview
 @Composable
@@ -96,14 +95,12 @@ private fun FormItemView(label: String, value: String, onChange: (value: String)
         Text(
             text = label, modifier = Modifier
                 .width(100.dp)
-                .padding(0.dp, 0.dp, 20.dp, 0.dp),
-            style = SimpleTextStyle
+                .padding(0.dp, 0.dp, 20.dp, 0.dp)
         )
         TextField(
             value = value,
             onValueChange = onChange,
-            modifier = Modifier.width(200.dp),
-            textStyle = SimpleTextStyle
+            modifier = Modifier.width(200.dp)
         )
     }
 }
