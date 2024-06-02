@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.Truckbill" parent="android:Theme.Material.Light.NoActionBar" />
-    <style name="Theme.Truckbill.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+<!--    <style name="Theme.Truckbill" parent="android:Theme.Material.Light.NoActionBar" />-->
+    <style name="Base.Theme.Truckbill" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+         <item name="colorPrimary">@color/primary</item>
     </style>
-    <style name="Theme.Truckbill.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="Theme.Truckbill.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.Truckbill" parent="Base.Theme.Truckbill">
+        <!-- Transparent system bars for edge-to-edge. -->
+<!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
+<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
+<!--        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>-->
+    </style>
 </resources>

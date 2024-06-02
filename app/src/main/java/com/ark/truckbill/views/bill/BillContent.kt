@@ -1,8 +1,10 @@
 package com.ark.truckbill.views.bill
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +23,19 @@ fun ContentPreView() {
 
 @Composable
 fun BillContent() {
+    Scaffold(
+        topBar = {
+            TopAppBar() {
+                Text(text = "新增账单")
+            }
+        },
+    ) {
+        BillForm()
+    }
+}
+
+@Composable
+private fun BillForm() {
     val billNameState = remember {
         mutableStateOf("")
     }
