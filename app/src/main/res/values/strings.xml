@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">货车记账</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+    <string name="some_year">%d 年</string>
+    <string name="some_month">%d 月</string>
+    <string name="year_month_day">%d年%d月%d日</string>
+
+    <string name="bill_name">货物名称</string>
+    <string name="place_of_departure">出发地</string>
+    <string name="destination">目的地</string>
+    <string name="price">价格</string>
+    <string name="height">重量</string>
+</resources>
