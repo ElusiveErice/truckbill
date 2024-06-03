@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.sp
 import com.ark.truckbill.R
 import com.ark.truckbill.data.Bill
 import com.ark.truckbill.ui.theme.BillItemBackground
-import java.util.Calendar
 
 @Composable
 fun BillList(billList: List<Bill>) {
@@ -59,9 +58,9 @@ private fun BillItem(bill: Bill) {
                 Text(
                     text = stringResource(
                         id = R.string.year_month_day,
-                        bill.startDate[Calendar.YEAR],
-                        bill.startDate[Calendar.MONTH] + 1,
-                        bill.startDate[Calendar.DAY_OF_MONTH]
+                        bill.startDate.year,
+                        bill.startDate.month,
+                        bill.startDate.dayOfMonth
                     )
                 )
             }

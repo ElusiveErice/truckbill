@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import com.ark.truckbill.R
 import com.ark.truckbill.components.YearMonthSelectModalLayout
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -26,7 +27,7 @@ fun HomepageScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     val dateState = remember {
-        mutableStateOf(Calendar.getInstance())
+        mutableStateOf(LocalDate.now())
     }
     Scaffold(
         topBar = {

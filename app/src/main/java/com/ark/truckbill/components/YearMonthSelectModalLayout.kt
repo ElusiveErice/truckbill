@@ -21,6 +21,7 @@ import com.ark.truckbill.R
 import com.ark.truckbill.dp2px
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
+import java.time.LocalDate
 import java.util.*
 
 
@@ -29,7 +30,7 @@ import java.util.*
 fun YearMonthSelectModalLayout(
     sheetState: ModalBottomSheetState =
         rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
-    dateState: MutableState<Calendar>,
+    dateState: MutableState<LocalDate>,
     hide: () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -40,10 +41,7 @@ fun YearMonthSelectModalLayout(
                 dateState.value,
                 onCancel = hide,
                 onConfirm = { year, month ->
-                    val date = Calendar.getInstance()
-                    date.set(Calendar.YEAR, year)
-                    date.set(Calendar.MONTH, month)
-                    dateState.value = date
+                    dateState.value = LocalDate.now().withYear(year).withMonth(month)
                     hide()
                 }
             )
@@ -53,15 +51,15 @@ fun YearMonthSelectModalLayout(
 
 @Composable
 fun YearMonthSelectContainer(
-    date: Calendar,
+    date: LocalDate,
     onCancel: () -> Unit,
     onConfirm: (years: Int, months: Int) -> Unit
 ) {
     val currentYearState = remember {
-        mutableStateOf(date[Calendar.YEAR])
+        mutableStateOf(date.year)
     }
     val currentMonthState = remember {
-        mutableStateOf(date[Calendar.MONTH])
+        mutableStateOf(date.monthValue)
     }
     val onClickConfirm = {
         onConfirm(currentYearState.value, currentMonthState.value)
@@ -78,11 +76,11 @@ fun YearMonthSelectContainer(
                 .height(250.dp)
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                SelectList(AlternativeYearList, date[Calendar.YEAR], R.string.some_year) {
+                SelectList(AlternativeYearList, date.year, R.string.some_year) {
                     currentYearState.value = it
                 }
-                SelectList(AlternativeMonthsList, date[Calendar.MONTH] + 1, R.string.some_month) {
-                    currentMonthState.value = it - 1
+                SelectList(AlternativeMonthsList, date.monthValue, R.string.some_month) {
+                    currentMonthState.value = it
                 }
             }
             Column(

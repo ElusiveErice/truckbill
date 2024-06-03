@@ -17,11 +17,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ark.truckbill.R
 import com.ark.truckbill.data.Bill
+import com.ark.truckbill.data.billEntityToBill
 import com.ark.truckbill.repository.BillDataBase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.time.LocalDate
 
 @Composable
 fun getBillList(): List<Bill> {
@@ -33,14 +34,14 @@ fun getBillList(): List<Bill> {
     LaunchedEffect(Unit) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            billList = dao.getAll().map { Bill.build(it) }
+            billList = dao.getAll().map { billEntityToBill(it) }
         }
     }
     return billList
 }
 
 @Composable
-fun HomepageContent(navController: NavController, currentDate: Calendar, show: () -> Unit) {
+fun HomepageContent(navController: NavController, currentDate: LocalDate, show: () -> Unit) {
     val billList = getBillList()
     val onClickAddBill = {
         navController.navigate("bill")
@@ -54,8 +55,8 @@ fun HomepageContent(navController: NavController, currentDate: Calendar, show: (
                 Text(
                     text = stringResource(
                         id = R.string.year_month,
-                        currentDate[Calendar.YEAR],
-                        currentDate[Calendar.MONTH] + 1
+                        currentDate.year,
+                        currentDate.monthValue
                     )
                 )
                 Icon(
