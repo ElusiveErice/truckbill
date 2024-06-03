@@ -5,12 +5,16 @@
     <string name="some_year">%d 年</string>
     <string name="some_month">%d 月</string>
     <string name="year_month_day">%d年%d月%d日</string>
+    <string name="year_month">%d年%d月</string>
 
     <string name="bill_name">货物名称</string>
     <string name="place_of_departure">出发地</string>
     <string name="destination">目的地</string>
     <string name="price">价格</string>
     <string name="height">重量</string>
+
+    <string name="some_yuan">%d元</string>
+    <string name="some_dun">%d吨</string>
     
     <string name="add_bill">新增账单</string>
     <string name="check_bill">查看账单</string>

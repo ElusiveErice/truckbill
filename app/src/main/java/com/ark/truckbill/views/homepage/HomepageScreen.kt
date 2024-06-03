@@ -15,8 +15,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.ark.truckbill.R
 import com.ark.truckbill.components.YearMonthSelectModalLayout
-import com.ark.truckbill.getCurrentDate
 import kotlinx.coroutines.launch
+import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -26,7 +26,7 @@ fun HomepageScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     val dateState = remember {
-        mutableStateOf(getCurrentDate())
+        mutableStateOf(Calendar.getInstance())
     }
     Scaffold(
         topBar = {

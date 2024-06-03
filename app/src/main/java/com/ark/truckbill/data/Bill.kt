@@ -1,8 +1,7 @@
 package com.ark.truckbill.data
 
 import com.ark.truckbill.repository.entity.BillEntity
-import kotlinx.datetime.LocalDate
-import java.util.Date
+import java.util.*
 
 data class Bill(
     val name: String,
@@ -12,8 +11,8 @@ data class Bill(
     val end: String
 ) {
     var isCloseOut = false
-    var startDate = LocalDate(2024, 3, 1)
-    var endDate = LocalDate(2024, 3, 1)
+    var startDate = Calendar.getInstance()
+    var endDate = Calendar.getInstance()
 
     companion object {
         fun build(billEntity: BillEntity): Bill {

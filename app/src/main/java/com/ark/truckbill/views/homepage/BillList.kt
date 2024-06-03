@@ -15,11 +15,7 @@ import androidx.compose.ui.unit.sp
 import com.ark.truckbill.R
 import com.ark.truckbill.data.Bill
 import com.ark.truckbill.ui.theme.BillItemBackground
-
-val bill1 = Bill("棉花", 30f, 200f, "芜湖", "长沙")
-val bill2 = Bill("棉花", 30f, 200f, "芜湖", "长沙")
-val testBillList =
-    mutableListOf<Bill>(bill1, bill2)
+import java.util.Calendar
 
 @Composable
 fun BillList(billList: List<Bill>) {
@@ -50,7 +46,7 @@ private fun BillItem(bill: Bill) {
                     )
                     Text(text = bill.end, fontSize = 24.sp)
                 }
-                Text(text = "${bill.price}元")
+                Text(text = stringResource(id = R.string.some_yuan, bill.price))
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -58,14 +54,14 @@ private fun BillItem(bill: Bill) {
             ) {
                 Row() {
                     Text(text = bill.name)
-                    Text(text = "${bill.weight}吨")
+                    Text(text = stringResource(id = R.string.some_dun, bill.weight))
                 }
                 Text(
                     text = stringResource(
                         id = R.string.year_month_day,
-                        bill.startDate.year,
-                        bill.startDate.monthNumber,
-                        bill.startDate.dayOfMonth
+                        bill.startDate[Calendar.YEAR],
+                        bill.startDate[Calendar.MONTH] + 1,
+                        bill.startDate[Calendar.DAY_OF_MONTH]
                     )
                 )
             }

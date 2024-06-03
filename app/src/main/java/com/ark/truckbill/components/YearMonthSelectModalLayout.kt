@@ -6,25 +6,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
-import com.ark.truckbill.R
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ark.truckbill.AlternativeMonthsList
 import com.ark.truckbill.AlternativeYearList
+import com.ark.truckbill.R
 import com.ark.truckbill.dp2px
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
-import kotlinx.datetime.LocalDate
+import java.util.*
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -32,7 +29,7 @@ import kotlinx.datetime.LocalDate
 fun YearMonthSelectModalLayout(
     sheetState: ModalBottomSheetState =
         rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
-    dateState: MutableState<LocalDate>,
+    dateState: MutableState<Calendar>,
     hide: () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -43,7 +40,10 @@ fun YearMonthSelectModalLayout(
                 dateState.value,
                 onCancel = hide,
                 onConfirm = { year, month ->
-                    dateState.value = LocalDate(year, month, 1)
+                    val date = Calendar.getInstance()
+                    date.set(Calendar.YEAR, year)
+                    date.set(Calendar.MONTH, month)
+                    dateState.value = date
                     hide()
                 }
             )
@@ -53,30 +53,18 @@ fun YearMonthSelectModalLayout(
 
 @Composable
 fun YearMonthSelectContainer(
-    date: LocalDate,
+    date: Calendar,
     onCancel: () -> Unit,
     onConfirm: (years: Int, months: Int) -> Unit
 ) {
     val currentYearState = remember {
-        mutableStateOf(date.year)
+        mutableStateOf(date[Calendar.YEAR])
     }
     val currentMonthState = remember {
-        mutableStateOf(date.monthNumber)
+        mutableStateOf(date[Calendar.MONTH])
     }
-    val connection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                return Offset(x = 0f, y = available.y)
-            }
-
-            override fun onPostScroll(
-                consumed: Offset,
-                available: Offset,
-                source: NestedScrollSource
-            ): Offset {
-                return Offset(x = 0f, y = available.y)
-            }
-        }
+    val onClickConfirm = {
+        onConfirm(currentYearState.value, currentMonthState.value)
     }
     Column(
         modifier = Modifier
@@ -90,11 +78,11 @@ fun YearMonthSelectContainer(
                 .height(250.dp)
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                SelectList(AlternativeYearList, date.year, R.string.some_year) {
+                SelectList(AlternativeYearList, date[Calendar.YEAR], R.string.some_year) {
                     currentYearState.value = it
                 }
-                SelectList(AlternativeMonthsList, date.monthNumber, R.string.some_month) {
-                    currentMonthState.value = it
+                SelectList(AlternativeMonthsList, date[Calendar.MONTH] + 1, R.string.some_month) {
+                    currentMonthState.value = it - 1
                 }
             }
             Column(
@@ -129,7 +117,7 @@ fun YearMonthSelectContainer(
                 Text(text = stringResource(id = R.string.cancel))
             }
             Box(modifier = Modifier.width(50.dp)) {}
-            Button(onClick = { onConfirm(currentYearState.value, currentMonthState.value) }) {
+            Button(onClick = onClickConfirm) {
                 Text(text = stringResource(id = R.string.confirm))
             }
         }

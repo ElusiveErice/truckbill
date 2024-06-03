@@ -12,14 +12,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ark.truckbill.R
 import com.ark.truckbill.data.Bill
 import com.ark.truckbill.repository.BillDataBase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
+import java.util.*
 
 @Composable
 fun getBillList(): List<Bill> {
@@ -38,7 +40,7 @@ fun getBillList(): List<Bill> {
 }
 
 @Composable
-fun HomepageContent(navController: NavController, currentDate: LocalDate, show: () -> Unit) {
+fun HomepageContent(navController: NavController, currentDate: Calendar, show: () -> Unit) {
     val billList = getBillList()
     val onClickAddBill = {
         navController.navigate("bill")
@@ -49,7 +51,13 @@ fun HomepageContent(navController: NavController, currentDate: LocalDate, show: 
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable(onClick = show)
             ) {
-                Text(text = "${currentDate.year}年${currentDate.monthNumber}月")
+                Text(
+                    text = stringResource(
+                        id = R.string.year_month,
+                        currentDate[Calendar.YEAR],
+                        currentDate[Calendar.MONTH] + 1
+                    )
+                )
                 Icon(
                     imageVector = Icons.Filled.ArrowDropDown,
                     contentDescription = "expand"
