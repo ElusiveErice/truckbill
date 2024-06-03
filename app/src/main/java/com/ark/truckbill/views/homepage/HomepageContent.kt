@@ -1,30 +1,48 @@
 package com.ark.truckbill.views.homepage
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ark.truckbill.data.Bill
+import com.ark.truckbill.repository.BillDataBase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 
+@Composable
+fun getBillList(): List<Bill> {
+    val context = LocalContext.current
+    val dao = BillDataBase.getDB(context).getBillDao()
+    var billList by remember {
+        mutableStateOf(listOf<Bill>())
+    }
+    LaunchedEffect(Unit) {
+
+        CoroutineScope(Dispatchers.IO).launch {
+            billList = dao.getAll().map { Bill.build(it) }
+        }
+    }
+    return billList
+}
 
 @Composable
 fun HomepageContent(navController: NavController, currentDate: LocalDate, show: () -> Unit) {
+    val billList = getBillList()
     val onClickAddBill = {
         navController.navigate("bill")
     }
-
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             Row(
@@ -37,7 +55,7 @@ fun HomepageContent(navController: NavController, currentDate: LocalDate, show: 
                     contentDescription = "expand"
                 )
             }
-            BillList(testBillList)
+            BillList(billList)
         }
         FloatingActionButton(
             onClick = onClickAddBill,

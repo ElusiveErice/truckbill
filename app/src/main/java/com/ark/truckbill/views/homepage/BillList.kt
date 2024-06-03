@@ -22,11 +22,9 @@ val testBillList =
     mutableListOf<Bill>(bill1, bill2)
 
 @Composable
-fun BillList(billList: MutableList<Bill>) {
+fun BillList(billList: List<Bill>) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        billList.forEach { item ->
-            BillItem(item)
-        }
+        billList.forEach { BillItem(it) }
     }
 }
 

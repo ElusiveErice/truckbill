@@ -3,10 +3,11 @@ package com.ark.truckbill.repository.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.*
 
 @Entity(tableName = "bill")
 data class BillEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Int,
     @ColumnInfo
     val name: String,
@@ -17,5 +18,12 @@ data class BillEntity(
     @ColumnInfo
     val start: String,
     @ColumnInfo
-    val end: String
+    val end: String,
+//    @ColumnInfo
+//    val startDate: Date,
+//    @ColumnInfo
+//    val endDate: Date,
+
+//    @ColumnInfo
+//    val updateTimeZone: SimpleTimeZone
 )
