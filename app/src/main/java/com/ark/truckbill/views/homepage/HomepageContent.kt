@@ -1,65 +1,25 @@
 package com.ark.truckbill.views.homepage
 
-import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ark.truckbill.R
-import com.ark.truckbill.activities.BillActivity
-import com.ark.truckbill.components.YearMonthSelectModalLayout
-import com.ark.truckbill.getCurrentDate
-import kotlinx.coroutines.launch
+import androidx.navigation.NavController
 import kotlinx.datetime.LocalDate
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomepageContent() {
-    val modalBottomSheetState =
-        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val scope = rememberCoroutineScope()
-
-    val dateState = remember {
-        mutableStateOf(getCurrentDate())
-    }
-    Scaffold(
-        topBar = {
-            TopAppBar() {
-                Text(text = stringResource(id = R.string.app_name))
-            }
-        }
-    ) {
-        YearMonthSelectModalLayout(
-            sheetState = modalBottomSheetState,
-            dateState = dateState,
-            hide = { scope.launch { modalBottomSheetState.hide() } }
-        ) {
-            Content(
-                currentDate = dateState.value,
-                show = { scope.launch { modalBottomSheetState.show() } })
-        }
-    }
-}
-
-@Composable
-private fun Content(currentDate: LocalDate, show: () -> Unit) {
-    val context = LocalContext.current
+fun HomepageContent(navController: NavController, currentDate: LocalDate, show: () -> Unit) {
     val onClickAddBill = {
-        val intent = Intent(context, BillActivity::class.java)
-        context.startActivity(intent)
+        navController.navigate("bill")
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
