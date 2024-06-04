@@ -38,10 +38,10 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
         mutableStateOf("")
     }
     val billPriceState = remember {
-        mutableStateOf(0)
+        mutableStateOf("")
     }
     val billWeightState = remember {
-        mutableStateOf(0)
+        mutableStateOf("")
     }
 
 
@@ -56,10 +56,10 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
                 val bill = dao.getBillWithId(billId)
                 if (bill != null) {
                     billNameState.value = bill.name
-                    billWeightState.value = bill.weight
+                    billWeightState.value = bill.weight.toString()
                     billStartState.value = bill.start
                     billEndState.value = bill.end
-                    billPriceState.value = bill.price
+                    billPriceState.value = bill.price.toString()
                 }
             }
         }
@@ -68,8 +68,8 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
     val onSave = {
         val billEntity = BillEntity(
             name = billNameState.value,
-            weight = billWeightState.value,
-            price = billPriceState.value,
+            weight = if (billWeightState.value == "") 0 else billWeightState.value.toInt(),
+            price = if (billPriceState.value == "") 0 else billPriceState.value.toInt(),
             start = billStartState.value,
             end = billEndState.value,
             startDate = LocalDate.now().format(YearMonthDayFormatter),
@@ -84,8 +84,8 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
             BillEntity(
                 id = it,
                 name = billNameState.value,
-                weight = billWeightState.value,
-                price = billPriceState.value,
+                weight = if (billWeightState.value == "") 0 else billWeightState.value.toInt(),
+                price = if (billPriceState.value == "") 0 else billPriceState.value.toInt(),
                 start = billStartState.value,
                 end = billEndState.value,
                 startDate = LocalDate.now().format(YearMonthDayFormatter),
@@ -144,6 +144,6 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
             }
         }
     ) {
-        BillContent(billNameState, billPriceState, billWeightState, billStartState, billEndState)
+        BillContent(billNameState, billWeightState, billPriceState, billStartState, billEndState)
     }
 }
