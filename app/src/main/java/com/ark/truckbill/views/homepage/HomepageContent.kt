@@ -1,6 +1,5 @@
 package com.ark.truckbill.views.homepage
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.FloatingActionButton
@@ -17,25 +16,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ark.truckbill.R
-import com.ark.truckbill.data.Bill
-import com.ark.truckbill.data.billEntityToBill
+import com.ark.truckbill.data.BillStatus
 import com.ark.truckbill.repository.BillDataBase
+import com.ark.truckbill.repository.entity.BillEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
-fun getBillList(): List<Bill> {
+fun getBillList(): List<BillEntity> {
     val context = LocalContext.current
     val dao = BillDataBase.getDB(context).getBillDao()
     var billList by remember {
-        mutableStateOf(listOf<Bill>())
+        mutableStateOf(listOf<BillEntity>())
     }
     LaunchedEffect(Unit) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            billList = dao.getAll().map { billEntityToBill(it) }
+            billList = dao.getAll()
         }
     }
     return billList
@@ -45,7 +44,7 @@ fun getBillList(): List<Bill> {
 fun HomepageContent(navController: NavController, currentDate: LocalDate, show: () -> Unit) {
     val billList = getBillList()
     val onClickAddBill = {
-        navController.navigate("bill")
+        navController.navigate("bill?billId=${0}/${BillStatus.ADD.name}")
     }
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -65,7 +64,7 @@ fun HomepageContent(navController: NavController, currentDate: LocalDate, show: 
                     contentDescription = "expand"
                 )
             }
-            BillList(billList)
+            BillList(navController, billList)
         }
         FloatingActionButton(
             onClick = onClickAddBill,

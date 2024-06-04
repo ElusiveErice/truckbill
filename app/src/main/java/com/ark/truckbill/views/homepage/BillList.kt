@@ -1,5 +1,6 @@
 package com.ark.truckbill.views.homepage
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -12,21 +13,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.ark.truckbill.R
-import com.ark.truckbill.data.Bill
+import com.ark.truckbill.data.BillStatus
+import com.ark.truckbill.repository.entity.BillEntity
 import com.ark.truckbill.ui.theme.BillItemBackground
+import java.time.LocalDate
 
 @Composable
-fun BillList(billList: List<Bill>) {
+fun BillList(navController: NavController, billList: List<BillEntity>) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        billList.forEach { BillItem(it) }
+        billList.forEach { BillItem(navController, it) }
     }
 }
 
 @Composable
-private fun BillItem(bill: Bill) {
+private fun BillItem(navController: NavController, bill: BillEntity) {
+    val onClick = {
+        navController.navigate("bill?billId=${bill.id}/${BillStatus.MODIFY.name}")
+    }
+    val stateDate = LocalDate.parse(bill.startDate)
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         backgroundColor = BillItemBackground,
         shape = MaterialTheme.shapes.small
     ) {
@@ -58,9 +68,9 @@ private fun BillItem(bill: Bill) {
                 Text(
                     text = stringResource(
                         id = R.string.year_month_day,
-                        bill.startDate.year,
-                        bill.startDate.monthValue,
-                        bill.startDate.dayOfMonth
+                        stateDate.year,
+                        stateDate.monthValue,
+                        stateDate.dayOfMonth
                     )
                 )
             }

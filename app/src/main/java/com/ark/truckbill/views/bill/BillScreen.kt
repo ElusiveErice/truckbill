@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.ark.truckbill.R
+import com.ark.truckbill.YearMonthDayFormatter
 import com.ark.truckbill.data.BillStatus
 import com.ark.truckbill.repository.BillDataBase
 import com.ark.truckbill.repository.entity.BillEntity
@@ -21,10 +22,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
-fun BillScreen(navController: NavController) {
+fun BillScreen(navController: NavController, billId: Int?, type: String) {
     var billStatus by remember {
         mutableStateOf(BillStatus.ADD)
     }
@@ -43,9 +43,28 @@ fun BillScreen(navController: NavController) {
     val billWeightState = remember {
         mutableStateOf(0)
     }
+
+
     val context = LocalContext.current
     val dao = BillDataBase.getDB(context).getBillDao()
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    LaunchedEffect(billId, type) {
+        billStatus = BillStatus.valueOf(type)
+        if (billStatus == BillStatus.MODIFY && billId != null) {
+            billStatus = BillStatus.MODIFY
+            CoroutineScope(Dispatchers.IO).launch {
+                val bill = dao.getBillWithId(billId)
+                if (bill != null) {
+                    billNameState.value = bill.name
+                    billWeightState.value = bill.weight
+                    billStartState.value = bill.start
+                    billEndState.value = bill.end
+                    billPriceState.value = bill.price
+                }
+            }
+        }
+    }
+
     val onSave = {
         val billEntity = BillEntity(
             name = billNameState.value,
@@ -53,11 +72,30 @@ fun BillScreen(navController: NavController) {
             price = billPriceState.value,
             start = billStartState.value,
             end = billEndState.value,
-            startDate = LocalDate.now().format(formatter),
-            endDate = LocalDate.now().format(formatter)
+            startDate = LocalDate.now().format(YearMonthDayFormatter),
+            endDate = LocalDate.now().format(YearMonthDayFormatter)
         )
         CoroutineScope(Dispatchers.IO).launch {
             dao.insertBill(billEntity)
+        }
+    }
+    val onUpdate = {
+        val billEntity = billId?.let {
+            BillEntity(
+                id = it,
+                name = billNameState.value,
+                weight = billWeightState.value,
+                price = billPriceState.value,
+                start = billStartState.value,
+                end = billEndState.value,
+                startDate = LocalDate.now().format(YearMonthDayFormatter),
+                endDate = LocalDate.now().format(YearMonthDayFormatter)
+            )
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            if (billEntity != null) {
+                dao.updateBillWithId(billEntity)
+            }
         }
     }
     val buttonTitle =
@@ -73,7 +111,7 @@ fun BillScreen(navController: NavController) {
                 navController.popBackStack()
             }
             BillStatus.MODIFY -> {
-                onSave()
+                onUpdate()
                 navController.popBackStack()
             }
         }
