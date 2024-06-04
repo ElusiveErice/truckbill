@@ -3,38 +3,31 @@ package com.ark.truckbill.views.bill
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ark.truckbill.R
+import com.ark.truckbill.data.billEntityToBill
+import com.ark.truckbill.repository.BillDataBase
+import com.ark.truckbill.repository.entity.BillEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 
 @Composable
-fun BillContent() {
-    BillForm()
-}
-
-@Composable
-private fun BillForm() {
-    val billNameState = remember {
-        mutableStateOf("")
-    }
-    val billStartState = remember {
-        mutableStateOf("")
-    }
-    val billEndState = remember {
-        mutableStateOf("")
-    }
-    val billPriceState = remember {
-        mutableStateOf(0)
-    }
-    val billHeightState = remember {
-        mutableStateOf(0)
-    }
-
+fun BillContent(
+    billNameState: MutableState<String>,
+    billWeightState: MutableState<Int>,
+    billPriceState: MutableState<Int>,
+    billStartState: MutableState<String>,
+    billEndState: MutableState<String>
+) {
     val onBillNameChange = { input: String ->
         billNameState.value = input
     }
@@ -45,11 +38,11 @@ private fun BillForm() {
         billEndState.value = input
     }
     val onBillPriceChange = { input: String ->
-        billPriceState.value = input.toInt()
+        billPriceState.value = if(input == "") 0 else input.toInt()
     }
     val onBillHeightChange = { input: String ->
-        billHeightState.value = input.toInt()
-    }
+        billWeightState.value = if(input == "") 0 else input.toInt()
+}
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -76,8 +69,8 @@ private fun BillForm() {
             onBillPriceChange
         )
         FormItemView(
-            stringResource(id = R.string.height),
-            billHeightState.value.toString(),
+            stringResource(id = R.string.weight),
+            billWeightState.value.toString(),
             onBillHeightChange
         )
     }

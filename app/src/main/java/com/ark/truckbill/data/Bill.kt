@@ -5,8 +5,8 @@ import java.time.LocalDate
 
 data class Bill(
     val name: String,
-    val weight: Float,
-    val price: Float,
+    val weight: Int,
+    val price: Int,
     val start: String,
     val end: String,
     val startDate: LocalDate,

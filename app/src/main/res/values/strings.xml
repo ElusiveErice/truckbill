@@ -11,7 +11,7 @@
     <string name="place_of_departure">出发地</string>
     <string name="destination">目的地</string>
     <string name="price">价格</string>
-    <string name="height">重量</string>
+    <string name="weight">重量</string>
 
     <string name="some_yuan">%d元</string>
     <string name="some_dun">%d吨</string>

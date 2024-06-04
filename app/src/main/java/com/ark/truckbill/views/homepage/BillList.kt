@@ -59,7 +59,7 @@ private fun BillItem(bill: Bill) {
                     text = stringResource(
                         id = R.string.year_month_day,
                         bill.startDate.year,
-                        bill.startDate.month,
+                        bill.startDate.monthValue,
                         bill.startDate.dayOfMonth
                     )
                 )

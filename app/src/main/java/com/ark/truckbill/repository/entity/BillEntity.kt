@@ -7,13 +7,13 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "bill")
 data class BillEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,
     @ColumnInfo
     val name: String,
     @ColumnInfo
-    val weight: Float,
+    val weight: Int = 0,
     @ColumnInfo
-    val price: Float,
+    val price: Int = 0,
     @ColumnInfo
     val start: String,
     @ColumnInfo
