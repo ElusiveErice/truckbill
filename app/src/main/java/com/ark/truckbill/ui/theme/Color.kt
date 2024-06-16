@@ -9,3 +9,5 @@ val Orange500 = Color(0xFFFFC161)
 val Orange700 = Color(0xFFFFB50D)
 
 val BillItemBackground = Color(0xFFF5E67D)
+
+val FocusColor = Color(0xFF259E04)

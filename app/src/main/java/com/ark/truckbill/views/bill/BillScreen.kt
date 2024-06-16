@@ -1,5 +1,6 @@
 package com.ark.truckbill.views.bill
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,7 +39,7 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
         mutableStateOf("")
     }
     val billPriceState = remember {
-        mutableStateOf("")
+        mutableStateOf(0)
     }
     val billWeightState = remember {
         mutableStateOf("")
@@ -59,17 +60,23 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
                     billWeightState.value = bill.weight.toString()
                     billStartState.value = bill.start
                     billEndState.value = bill.end
-                    billPriceState.value = bill.price.toString()
+                    billPriceState.value = bill.price
                 }
             }
         }
     }
 
+    val check = {
+        val name = billNameState.value
+        if (name.isEmpty()) {
+            Log.i("xpf", "")
+        }
+    }
     val onSave = {
         val billEntity = BillEntity(
             name = billNameState.value,
             weight = if (billWeightState.value == "") 0 else billWeightState.value.toInt(),
-            price = if (billPriceState.value == "") 0 else billPriceState.value.toInt(),
+            price = billPriceState.value,
             start = billStartState.value,
             end = billEndState.value,
             startDate = LocalDate.now().format(YearMonthDayFormatter),
@@ -85,7 +92,7 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
                 id = it,
                 name = billNameState.value,
                 weight = if (billWeightState.value == "") 0 else billWeightState.value.toInt(),
-                price = if (billPriceState.value == "") 0 else billPriceState.value.toInt(),
+                price = billPriceState.value,
                 start = billStartState.value,
                 end = billEndState.value,
                 startDate = LocalDate.now().format(YearMonthDayFormatter),
@@ -98,6 +105,7 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
             }
         }
     }
+
     val buttonTitle =
         if (billStatus == BillStatus.CHECK) stringResource(id = R.string.edit)
         else stringResource(id = R.string.save)
