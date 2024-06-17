@@ -15,11 +15,13 @@
 
     <string name="some_yuan">%d元</string>
     <string name="some_dun">%d吨</string>
-    
+
     <string name="add_bill">新增账单</string>
     <string name="check_bill">查看账单</string>
     <string name="modify_bill">修改账单</string>
 
     <string name="edit">编辑</string>
     <string name="save">保存</string>
+
+    <string name="select_date">选择日期</string>
 </resources>

@@ -14,7 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.ark.truckbill.R
-import com.ark.truckbill.components.YearMonthSelectModalLayout
+import com.ark.truckbill.components.DatePicker
+import com.ark.truckbill.components.DatePickerMode
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.*
@@ -46,10 +47,21 @@ fun HomepageScreen(navController: NavController) {
             }
         }
     ) {
-        YearMonthSelectModalLayout(
+        ModalBottomSheetLayout(
             sheetState = modalBottomSheetState,
-            dateState = dateState,
-            hide = { scope.launch { modalBottomSheetState.hide() } }
+            sheetContent = {
+                DatePicker(
+                    DatePickerMode.YearMonth,
+                    dateState.value.year,
+                    dateState.value.monthValue,
+                    dateState.value.dayOfMonth,
+                ) { selected, year, month, day ->
+                    if (selected)
+                        dateState.value =
+                            LocalDate.now().withYear(year).withMonth(month).withDayOfMonth(day)
+                    scope.launch { modalBottomSheetState.hide() }
+                }
+            }
         ) {
             HomepageContent(
                 navController = navController,
