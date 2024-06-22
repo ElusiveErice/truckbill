@@ -25,26 +25,24 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
-fun getBillList(): List<BillEntity> {
+fun HomepageContent(navController: NavController, currentDate: LocalDate, show: () -> Unit) {
     val context = LocalContext.current
     val dao = BillDataBase.getDB(context).getBillDao()
     var billList by remember {
         mutableStateOf(listOf<BillEntity>())
     }
-    LaunchedEffect(Unit) {
-
+    val onClickAddBill = {
+        navController.navigate("bill?billId=${0}/${BillStatus.ADD.name}")
+    }
+    val onRefresh: () -> Unit = {
         CoroutineScope(Dispatchers.IO).launch {
             billList = dao.getAll()
         }
     }
-    return billList
-}
-
-@Composable
-fun HomepageContent(navController: NavController, currentDate: LocalDate, show: () -> Unit) {
-    val billList = getBillList()
-    val onClickAddBill = {
-        navController.navigate("bill?billId=${0}/${BillStatus.ADD.name}")
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            billList = dao.getAll()
+        }
     }
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -64,7 +62,7 @@ fun HomepageContent(navController: NavController, currentDate: LocalDate, show: 
                     contentDescription = "expand"
                 )
             }
-            BillList(navController, billList)
+            BillList(navController, billList, onRefresh)
         }
         FloatingActionButton(
             onClick = onClickAddBill,

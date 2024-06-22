@@ -20,4 +20,7 @@ interface BillDao {
 
     @Update
     fun updateBill(billEntity: BillEntity)
+
+    @Delete
+    fun deleteBill(billEntity: BillEntity)
 }
