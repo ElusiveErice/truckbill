@@ -1,5 +1,6 @@
 package com.ark.truckbill.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -7,9 +8,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.ark.truckbill.R
 
 enum class DatePickerMode {
@@ -18,9 +21,65 @@ enum class DatePickerMode {
     YearMonthDay,
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DatePicker(
+fun DatePickerModal(
     mode: DatePickerMode = DatePickerMode.YearMonthDay,
+    sheetState: ModalBottomSheetState =
+        rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
+    year: Int = 2024,
+    month: Int = 1,
+    day: Int = 1,
+    onDismiss: (selected: Boolean, year: Int, month: Int, day: Int) -> Unit,
+    content: @Composable () -> Unit
+) {
+    var selectYear by remember { mutableStateOf(2024) }
+    var selectMonth by remember { mutableStateOf(1) }
+    var selectDay by remember { mutableStateOf(1) }
+    LaunchedEffect(year, month, day) {
+        selectYear = year
+        selectMonth = month
+        selectDay = day
+    }
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+            ) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    Arrangement.SpaceBetween,
+                    Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { onDismiss(false, 0, 0, 0) }) {
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "cancel")
+                    }
+                    Text(text = stringResource(id = R.string.select_date))
+                    TextButton(onClick = { onDismiss(true, selectYear, selectMonth, selectDay) }) {
+                        Text(text = stringResource(id = R.string.confirm))
+                    }
+                }
+                DateWheel(mode, selectYear, selectMonth, selectDay) { index, value ->
+                    when (index) {
+                        0 -> selectYear = value
+                        1 -> selectMonth = value
+                        2 -> selectDay = value
+                    }
+                }
+            }
+        }
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun DatePickerDialog(
+    mode: DatePickerMode = DatePickerMode.YearMonthDay,
+    dialogState: MutableState<Boolean>,
     year: Int = 2024,
     month: Int = 1,
     day: Int = 1,
@@ -30,41 +89,47 @@ fun DatePicker(
     var selectMonth by remember { mutableStateOf(month) }
     var selectDay by remember { mutableStateOf(day) }
 
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(top = 4.dp),
-    ) {
-        TitleBar(
-            onConfirm = { onDismiss(true, selectYear, selectMonth, selectDay) },
-            onCancel = { onDismiss(false, 0, 0, 0) }
-        )
-        DateWheel(mode, selectYear, selectMonth, selectDay) { index, value ->
-            when (index) {
-                0 -> selectYear = value
-                1 -> selectMonth = value
-                2 -> selectDay = value
+    LaunchedEffect(year, month, day) {
+        selectYear = year
+        selectMonth = month
+        selectDay = day
+    }
+    if (dialogState.value) {
+        Dialog(onDismissRequest = { onDismiss(false, 0, 0, 0) }) {
+            Column(
+                modifier = Modifier
+                    .width(500.dp)
+                    .background(Color.White, MaterialTheme.shapes.small)
+                    .padding(10.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.select_date),
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                DateWheel(mode, selectYear, selectMonth, selectDay) { index, value ->
+                    when (index) {
+                        0 -> selectYear = value
+                        1 -> selectMonth = value
+                        2 -> selectDay = value
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    OutlinedButton(onClick = { onDismiss(false, 0, 0, 0) }) {
+                        Text(text = stringResource(id = R.string.cancel))
+                    }
+                    Button(onClick = { onDismiss(true, selectYear, selectMonth, selectDay) }) {
+                        Text(text = stringResource(id = R.string.confirm))
+                    }
+                }
             }
         }
     }
 }
 
-@Composable
-private fun TitleBar(onConfirm: () -> Unit, onCancel: () -> Unit) {
-    Row(
-        Modifier.fillMaxWidth(),
-        Arrangement.SpaceBetween,
-        Alignment.CenterVertically
-    ) {
-        IconButton(onClick = onCancel) {
-            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "cancel")
-        }
-        Text(text = stringResource(id = R.string.select_date))
-        TextButton(onClick = onConfirm) {
-            Text(text = stringResource(id = R.string.confirm))
-        }
-    }
-}
 
 @Composable
 private fun DateWheel(
@@ -90,7 +155,7 @@ private fun DateWheel(
                     DatePickerMode.YearMonthDay,
                     DatePickerMode.YearMonth,
                     DatePickerMode.Year
-                ).indexOf(mode) > 0
+                ).indexOf(mode) > -1
             )
                 ColumnPicker(
                     modifier = modifier,
@@ -103,7 +168,7 @@ private fun DateWheel(
                 )
 
             //  月
-            if (setOf(DatePickerMode.YearMonthDay, DatePickerMode.YearMonth).indexOf(mode) > 0)
+            if (setOf(DatePickerMode.YearMonthDay, DatePickerMode.YearMonth).indexOf(mode) > -1)
                 ColumnPicker(
                     modifier = modifier,
                     value = month,
@@ -117,7 +182,7 @@ private fun DateWheel(
             //  日
             val lastDay = getLastDay(year, month)
             if (day > lastDay) onChange(2, lastDay)
-            if (setOf(DatePickerMode.YearMonthDay).indexOf(mode) > 0)
+            if (setOf(DatePickerMode.YearMonthDay).indexOf(mode) > -1)
                 ColumnPicker(
                     modifier = modifier,
                     value = day,

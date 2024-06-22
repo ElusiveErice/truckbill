@@ -42,9 +42,14 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
         mutableStateOf(0)
     }
     val billWeightState = remember {
-        mutableStateOf("")
+        mutableStateOf(0)
     }
-
+    val billStartDateState = remember {
+        mutableStateOf(LocalDate.now().format(YearMonthDayFormatter))
+    }
+    val billEndDateState = remember {
+        mutableStateOf(LocalDate.now().format(YearMonthDayFormatter))
+    }
 
     val context = LocalContext.current
     val dao = BillDataBase.getDB(context).getBillDao()
@@ -57,51 +62,40 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
                 val bill = dao.getBillWithId(billId)
                 if (bill != null) {
                     billNameState.value = bill.name
-                    billWeightState.value = bill.weight.toString()
+                    billWeightState.value = bill.weight
                     billStartState.value = bill.start
                     billEndState.value = bill.end
                     billPriceState.value = bill.price
+                    billStartDateState.value = bill.startDate
+                    billEndDateState.value = bill.endDate
                 }
             }
         }
     }
 
-    val check = {
-        val name = billNameState.value
-        if (name.isEmpty()) {
-            Log.i("xpf", "")
-        }
-    }
-    val onSave = {
-        val billEntity = BillEntity(
+    val buildBillEntity = {
+        BillEntity(
+            id = billId ?: 0,
             name = billNameState.value,
-            weight = if (billWeightState.value == "") 0 else billWeightState.value.toInt(),
+            weight = billWeightState.value,
             price = billPriceState.value,
             start = billStartState.value,
             end = billEndState.value,
-            startDate = LocalDate.now().format(YearMonthDayFormatter),
-            endDate = LocalDate.now().format(YearMonthDayFormatter)
+            startDate = billStartDateState.value,
+            endDate = billEndDateState.value
         )
+    }
+    val onSave = {
+        val billEntity = buildBillEntity()
         CoroutineScope(Dispatchers.IO).launch {
             dao.insertBill(billEntity)
         }
     }
     val onUpdate = {
-        val billEntity = billId?.let {
-            BillEntity(
-                id = it,
-                name = billNameState.value,
-                weight = if (billWeightState.value == "") 0 else billWeightState.value.toInt(),
-                price = billPriceState.value,
-                start = billStartState.value,
-                end = billEndState.value,
-                startDate = LocalDate.now().format(YearMonthDayFormatter),
-                endDate = LocalDate.now().format(YearMonthDayFormatter)
-            )
-        }
+        val billEntity = billId?.let { buildBillEntity() }
         CoroutineScope(Dispatchers.IO).launch {
             if (billEntity != null) {
-                dao.updateBillWithId(billEntity)
+                dao.updateBill(billEntity)
             }
         }
     }
@@ -152,6 +146,14 @@ fun BillScreen(navController: NavController, billId: Int?, type: String) {
             }
         }
     ) {
-        BillContent(billNameState, billWeightState, billPriceState, billStartState, billEndState)
+        BillContent(
+            billNameState,
+            billWeightState,
+            billPriceState,
+            billStartState,
+            billEndState,
+            billStartDateState,
+            billEndDateState
+        )
     }
 }

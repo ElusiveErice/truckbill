@@ -19,5 +19,5 @@ interface BillDao {
     fun insertBill(billEntity: BillEntity)
 
     @Update
-    fun updateBillWithId(billEntity: BillEntity)
+    fun updateBill(billEntity: BillEntity)
 }

@@ -1,14 +1,12 @@
 package com.ark.truckbill.components
 
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import com.ark.truckbill.ui.theme.FocusColor
 
 @Composable
@@ -18,8 +16,11 @@ fun TextInput(
     onChange: (value: String) -> Unit,
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
+    enabled: Boolean = true,
 ) {
+    val numberVisualTransformation = VisualTransformation.None
     TextField(
+        enabled = enabled,
         label = { Text(text = label) },
         value = value, onValueChange = onChange,
         modifier = modifier,
@@ -33,5 +34,6 @@ fun TextInput(
         ),
         shape = MaterialTheme.shapes.small,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        visualTransformation = numberVisualTransformation
     )
 }

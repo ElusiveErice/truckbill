@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.ark.truckbill.R
-import com.ark.truckbill.components.DatePicker
+import com.ark.truckbill.components.DatePickerModal
 import com.ark.truckbill.components.DatePickerMode
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -26,9 +26,14 @@ fun HomepageScreen(navController: NavController) {
     val modalBottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val scope = rememberCoroutineScope()
-
     val dateState = remember {
         mutableStateOf(LocalDate.now())
+    }
+    val onDismiss: (Boolean, Int, Int, Int) -> Unit = { selected, year, month, day ->
+        if (selected)
+            dateState.value =
+                LocalDate.now().withYear(year).withMonth(month).withDayOfMonth(day)
+        scope.launch { modalBottomSheetState.hide() }
     }
     Scaffold(
         topBar = {
@@ -47,21 +52,13 @@ fun HomepageScreen(navController: NavController) {
             }
         }
     ) {
-        ModalBottomSheetLayout(
+        DatePickerModal(
+            mode = DatePickerMode.YearMonth,
             sheetState = modalBottomSheetState,
-            sheetContent = {
-                DatePicker(
-                    DatePickerMode.YearMonth,
-                    dateState.value.year,
-                    dateState.value.monthValue,
-                    dateState.value.dayOfMonth,
-                ) { selected, year, month, day ->
-                    if (selected)
-                        dateState.value =
-                            LocalDate.now().withYear(year).withMonth(month).withDayOfMonth(day)
-                    scope.launch { modalBottomSheetState.hide() }
-                }
-            }
+            year = dateState.value.year,
+            month = dateState.value.monthValue,
+            day = dateState.value.dayOfMonth,
+            onDismiss = onDismiss
         ) {
             HomepageContent(
                 navController = navController,
