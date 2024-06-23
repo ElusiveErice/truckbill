@@ -107,7 +107,7 @@ private fun BillItem(navController: NavController, bill: BillEntity, onRefresh: 
                     Button(onClick = onDeleteBill) { Text(text = stringResource(id = R.string.confirm)) }
                 },
                 dismissButton = {
-                    Button(onClick = closeAlert) { Text(text = stringResource(id = R.string.cancel)) }
+                    OutlinedButton(onClick = closeAlert) { Text(text = stringResource(id = R.string.cancel)) }
                 }
             )
         }
