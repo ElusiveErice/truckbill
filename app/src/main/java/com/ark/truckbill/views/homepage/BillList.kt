@@ -102,7 +102,7 @@ private fun BillItem(navController: NavController, bill: BillEntity, onRefresh: 
         if (alertState.value) {
             AlertDialog(
                 onDismissRequest = closeAlert,
-                title = { Text(text = "是否确认删除") },
+                title = { Text(text = stringResource(id = R.string.is_sure_delete)) },
                 confirmButton = {
                     Button(onClick = onDeleteBill) { Text(text = stringResource(id = R.string.confirm)) }
                 },
