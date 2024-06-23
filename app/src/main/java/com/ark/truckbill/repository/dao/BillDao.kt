@@ -12,6 +12,9 @@ interface BillDao {
     @Query("Select * from bill")
     fun getAll(): List<BillEntity>
 
+    @Query("Select * from bill where startDate Like :year || '-' || :month || '-%' OR startDate Like :year || '-0' || :month || '-%'")
+    fun getBillsWithYearAndMonth(year: Int, month: Int): List<BillEntity>
+
     @Query("Select * from bill where id = :id")
     fun getBillWithId(id: Int): BillEntity?
 

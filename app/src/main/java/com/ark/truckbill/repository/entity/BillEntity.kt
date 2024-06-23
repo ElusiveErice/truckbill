@@ -3,6 +3,7 @@ package com.ark.truckbill.repository.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.*
 
 @Entity(tableName = "bill")
 data class BillEntity(

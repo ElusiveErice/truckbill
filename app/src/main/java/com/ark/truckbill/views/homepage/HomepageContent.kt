@@ -1,5 +1,6 @@
 package com.ark.truckbill.views.homepage
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.FloatingActionButton
@@ -36,12 +37,12 @@ fun HomepageContent(navController: NavController, currentDate: LocalDate, show: 
     }
     val onRefresh: () -> Unit = {
         CoroutineScope(Dispatchers.IO).launch {
-            billList = dao.getAll()
+            billList = dao.getBillsWithYearAndMonth(currentDate.year, currentDate.monthValue)
         }
     }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(currentDate) {
         CoroutineScope(Dispatchers.IO).launch {
-            billList = dao.getAll()
+            billList = dao.getBillsWithYearAndMonth(currentDate.year, currentDate.monthValue)
         }
     }
     Box(modifier = Modifier.fillMaxSize()) {
